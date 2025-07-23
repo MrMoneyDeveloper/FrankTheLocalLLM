@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     logger.info("Starting %s", settings.app_name)
     run(
-        "app:app",
+        "backend.app:app",
         host=settings.host,
         port=settings.port,
         reload=settings.debug,
