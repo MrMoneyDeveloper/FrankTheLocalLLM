@@ -69,3 +69,17 @@ A .NET console application demonstrates SQLite data access using Dapper followin
 
 By default the app stores data in `app.db`, creating the database if it does not exist.
 
+## Dev Container
+
+A `.devcontainer` configuration is provided for offline development.
+It installs Python 3.11, Flutter, the .NET 8 SDK, SQLite and Ollama.
+The container mounts a Docker volume at `/root/.ollama` so models and
+database files persist between sessions.
+
+Launch the environment with the [devcontainer CLI](https://containers.dev/cli):
+
+```bash
+devcontainer up
+```
+
+
