@@ -19,3 +19,8 @@ __pycache__/
 *.pyc
 .env
 
+# .NET
+bin/
+obj/
+*.db
+

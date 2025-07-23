@@ -1,15 +1,10 @@
 # FrankTheLocalLLM
 
-
-This repository contains a minimal Flutter project configured with
-[responsive_framework](https://pub.dev/packages/responsive_framework) to
-provide adaptive layouts across devices. The project also includes the web
-folder so it can be built and served as a web application.
+This repository contains a minimal Flutter project configured with [responsive_framework](https://pub.dev/packages/responsive_framework) to provide adaptive layouts across devices. The project also includes the web folder so it can be built and served as a web application.
 
 ## Getting Started
 
-1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) on
-   your machine.
+1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) on your machine.
 
 2. Fetch dependencies:
    ```bash
@@ -40,4 +35,23 @@ A simple FastAPI backend is located in the `backend/` directory. The configurati
    ```
 
 The server exposes a sample endpoint at `/api/hello` returning a welcome message.
+
+
+## Console Service
+
+A .NET console application demonstrates SQLite data access using Dapper following a simple clean architecture layout. Projects reside in `src/`.
+
+### Setup
+
+1. Install the .NET SDK 8.0 or newer.
+2. Restore and build the solution:
+   ```bash
+   dotnet build src/ConsoleAppSolution.sln -c Release
+   ```
+3. Run the console app:
+   ```bash
+   dotnet run --project src/ConsoleApp/ConsoleApp.csproj
+   ```
+
+By default the app stores data in `app.db`, creating the database if it does not exist.
 
