@@ -18,7 +18,9 @@ web/static/
 __pycache__/
 *.pyc
 .env
+
 # .NET
 bin/
 obj/
 *.db
+

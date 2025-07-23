@@ -5,6 +5,7 @@ This repository contains a minimal Flutter project configured with [responsive_f
 ## Getting Started
 
 1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) on your machine.
+
 2. Fetch dependencies:
    ```bash
    flutter pub get
@@ -15,6 +16,7 @@ This repository contains a minimal Flutter project configured with [responsive_f
    ```
 
 You can modify `lib/main.dart` to adjust breakpoints or add additional widgets.
+
 
 ## Backend API
 
@@ -34,6 +36,7 @@ A simple FastAPI backend is located in the `backend/` directory. The configurati
 
 The server exposes a sample endpoint at `/api/hello` returning a welcome message.
 
+
 ## Console Service
 
 A .NET console application demonstrates SQLite data access using Dapper following a simple clean architecture layout. Projects reside in `src/`.
@@ -51,3 +54,4 @@ A .NET console application demonstrates SQLite data access using Dapper followin
    ```
 
 By default the app stores data in `app.db`, creating the database if it does not exist.
+
