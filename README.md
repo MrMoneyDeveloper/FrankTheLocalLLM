@@ -36,6 +36,20 @@ A simple FastAPI backend is located in the `backend/` directory. The configurati
 
 The server exposes a sample endpoint at `/api/hello` returning a welcome message.
 
+### Trivia Chain Demo
+
+The backend now includes a simple [LangChain](https://python.langchain.com) setup
+that uses a local LLM provided by [Ollama](https://ollama.ai). A small knowledge
+base lives in `backend/data/trivia.md` and is loaded into a vector store on
+startup. When Ollama is running locally, you can query this data via:
+
+```bash
+curl "http://localhost:8000/api/trivia?q=What is the largest planet?"
+```
+
+Make sure to install the new Python dependencies and have an Ollama model (for
+example `llama3`) available.
+
 
 ## Console Service
 
