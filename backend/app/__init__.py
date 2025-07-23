@@ -8,6 +8,7 @@ from .services.trivia_service import router as trivia_router
 from .services.auth_service import router as auth_router
 from .services.user_service import router as user_router
 from .services.agent_service import router as agent_router
+from .services.chat_service import router as chat_router
 
 settings = Settings()
 
@@ -28,3 +29,4 @@ app.include_router(trivia_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 app.include_router(agent_router, prefix="/api")
+app.include_router(chat_router, prefix="/api")
