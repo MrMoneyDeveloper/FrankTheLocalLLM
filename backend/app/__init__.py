@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .config import Settings
 from .services.example_service import router as example_router
+from .services.trivia_service import router as trivia_router
 
 settings = Settings()
 
@@ -16,3 +17,4 @@ app.add_middleware(
 )
 
 app.include_router(example_router, prefix="/api")
+app.include_router(trivia_router, prefix="/api")
