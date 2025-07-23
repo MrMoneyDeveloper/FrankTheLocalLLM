@@ -2,8 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import Settings
+from .db import Base, engine
 from .services.example_service import router as example_router
 from .services.trivia_service import router as trivia_router
+from .services.auth_service import router as auth_router
+from .services.user_service import router as user_router
+from .services.agent_service import router as agent_router
 
 settings = Settings()
 
@@ -16,5 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Ensure database tables exist
+Base.metadata.create_all(bind=engine)
+
 app.include_router(example_router, prefix="/api")
 app.include_router(trivia_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(user_router, prefix="/api")
+app.include_router(agent_router, prefix="/api")

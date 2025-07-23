@@ -8,3 +8,7 @@ chromadb
 ollama
 unstructured
 markdown
+sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+langchain-experimental
