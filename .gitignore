@@ -14,3 +14,8 @@ android/app/build/
 # Web
 web/static/
 
+# Python
+__pycache__/
+*.pyc
+.env
+
