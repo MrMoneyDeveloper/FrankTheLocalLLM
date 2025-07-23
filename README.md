@@ -68,6 +68,11 @@ A .NET console application demonstrates SQLite data access using Dapper followin
    ```
 
 By default the app stores data in `app.db`, creating the database if it does not exist.
+The infrastructure project also exposes a `UserRepository` with async CRUD
+operations powered by Dapper. Migration scripts under
+`src/Infrastructure/Migrations` set up tables for `users`, `entries`, `tasks`
+and `llm_logs`. A simple `user_stats` view provides aggregate counts which the
+repository surfaces via `GetStatsAsync`.
 
 ## Dev Container
 
