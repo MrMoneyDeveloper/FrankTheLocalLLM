@@ -1,33 +1,19 @@
 # FrankTheLocalLLM
 
-This repository contains a minimal Flutter project configured with [responsive_framework](https://pub.dev/packages/responsive_framework) to provide adaptive layouts across devices. The project also includes the web folder so it can be built and served as a web application.
+This repository contains a minimal front‑end built with Vue.js and Tailwind CSS plus a FastAPI backend and a .NET console application.
 
 ## Getting Started
 
-1. Install the [Flutter SDK](https://docs.flutter.dev/get-started/install) on your machine.
-
-2. Fetch dependencies:
+1. Serve the Vue.js front-end from the `vue/` directory:
    ```bash
-   flutter pub get
-   ```
-3. Run the application in Chrome:
-   ```bash
-   flutter run -d chrome
+   cd vue && python -m http.server
    ```
 
-You can modify `lib/main.dart` to adjust breakpoints or add additional widgets.
+2. In your browser open the served page. The client expects the FastAPI backend
+   to be available at `http://localhost:8000/api`.
 
-## Vue.js Demo
-
-A lightweight Vue 3 and Tailwind CSS version of the login form is located in
-`vue/`. Serve the folder with any static file server, e.g.:
-
-```bash
-cd vue && python -m http.server
-```
-
-Then open the page in your browser. The client expects the FastAPI backend to be
-available at `http://localhost:8000/api`.
+You can modify `vue/index.html` and `vue/app.js` to tweak the UI or add new
+components.
 
 
 ## Backend API
@@ -103,7 +89,7 @@ repository surfaces via `GetStatsAsync`.
 ## Dev Container
 
 A `.devcontainer` configuration is provided for offline development.
-It installs Python 3.11, Flutter, the .NET 8 SDK, SQLite and Ollama.
+It installs Python 3.11, Node.js, the .NET 8 SDK, SQLite and Ollama.
 The container mounts a Docker volume at `/root/.ollama` so models and
 database files persist between sessions.
 
@@ -122,9 +108,8 @@ To build and launch all parts of the project at once run:
 ```
 
 This script sequentially builds the .NET console app, installs Python
-dependencies and starts the FastAPI API, then launches the Flutter web
-application. The backend server stops automatically when you exit the
-Flutter process.
+dependencies and starts the FastAPI API, then serves the Vue.js front‑end.
+The backend server stops automatically when you exit the HTTP server.
 
 On Windows you can run the commands from `run_all.sh` in PowerShell or use
 WSL to execute the script directly. Running them in order ensures all
