@@ -2,34 +2,30 @@ from pathlib import Path
 from fastapi import APIRouter, HTTPException, Body, Depends
 
 from ..llm import LLMClient, OllamaLLM
-from ..utils.cache import Cache
+from . import CachedLLMService
 
 router = APIRouter(tags=["chat"], prefix="/chat")
 
-CACHE_FILE = Path(__file__).resolve().parents[1] / "data" / "chat_cache.json"
 
+class ChatService(CachedLLMService):
+    _llm: LLMClient | None = None  # allow monkeypatching in tests
+    _cache = None  # compat for tests
 
-class ChatService:
-    def __init__(self, llm: LLMClient, cache: Cache):
-        self._llm = llm
-        self._cache = cache
+    def __init__(self, llm: LLMClient):
+        super().__init__(llm)
 
     def chat(self, message: str) -> dict:
-        cached = self._cache.get(message)
-        if cached is not None:
-            return {"response": cached, "cached": True}
         try:
-            response = self._llm.invoke(message)
+            response = self.llm_invoke(message)
+            cached = self.was_cached()
         except Exception as exc:  # pragma: no cover - runtime failure
             raise HTTPException(status_code=500, detail=str(exc))
-        self._cache.set(message, response)
-        return {"response": response, "cached": False}
+        return {"response": response, "cached": cached}
 
 
 def get_service() -> ChatService:
     llm = OllamaLLM()
-    cache = Cache(CACHE_FILE)
-    return ChatService(llm, cache)
+    return ChatService(llm)
 
 
 @router.post("/")
