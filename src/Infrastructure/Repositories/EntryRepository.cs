@@ -6,13 +6,10 @@ using Infrastructure.QueryBuilders;
 
 namespace Infrastructure.Repositories;
 
-public class EntryRepository : IEntryRepository
+public class EntryRepository : BaseRepository<Entry>, IEntryRepository
 {
-    private readonly LoggingDataAccess _db;
-
-    public EntryRepository(LoggingDataAccess db)
+    public EntryRepository(LoggingDataAccess db) : base(db, "entries")
     {
-        _db = db;
     }
 
     public async Task InitializeAsync()
@@ -28,12 +25,6 @@ public class EntryRepository : IEntryRepository
         await _db.ExecuteAsync(sql);
     }
 
-    public async Task<int> AddAsync(Entry entry)
-    {
-        var sql = "INSERT INTO entries (user_id, content, tags, created_at) VALUES (@UserId, @Content, @Tags, @CreatedAt); SELECT last_insert_rowid();";
-        var id = await _db.ExecuteScalarAsync<long>(sql, entry);
-        return (int)id;
-    }
 
     public async Task<IEnumerable<Entry>> QueryAsync(EntryQueryOptions options)
     {

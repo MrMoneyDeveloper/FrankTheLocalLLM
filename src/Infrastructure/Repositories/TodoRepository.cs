@@ -4,13 +4,10 @@ using Infrastructure.Data;
 
 namespace Infrastructure.Repositories;
 
-public class TodoRepository : ITodoRepository
+public class TodoRepository : BaseRepository<TodoItem>, ITodoRepository
 {
-    private readonly LoggingDataAccess _db;
-
-    public TodoRepository(LoggingDataAccess db)
+    public TodoRepository(LoggingDataAccess db) : base(db, "todos")
     {
-        _db = db;
     }
 
     public async Task InitializeAsync()
@@ -23,16 +20,4 @@ public class TodoRepository : ITodoRepository
         await _db.ExecuteAsync(query);
     }
 
-    public async Task<int> AddAsync(TodoItem item)
-    {
-        var sql = "INSERT INTO Todos (Title, IsCompleted) VALUES (@Title, @IsCompleted); SELECT last_insert_rowid();";
-        var id = await _db.ExecuteScalarAsync<long>(sql, item);
-        return (int)id;
-    }
-
-    public async Task<IEnumerable<TodoItem>> GetAllAsync()
-    {
-        var sql = "SELECT Id, Title, IsCompleted FROM Todos";
-        return await _db.QueryAsync<TodoItem>(sql);
-    }
 }

@@ -5,13 +5,10 @@ using Dapper;
 
 namespace Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository : BaseRepository<User>, IUserRepository
 {
-    private readonly LoggingDataAccess _db;
-
-    public UserRepository(LoggingDataAccess db)
+    public UserRepository(LoggingDataAccess db) : base(db, "users")
     {
-        _db = db;
     }
 
     public async Task InitializeAsync()
@@ -49,37 +46,6 @@ public class UserRepository : IUserRepository
                 LEFT JOIN tasks t ON t.user_id = u.id
             GROUP BY u.id;";
         await _db.ExecuteAsync(sql);
-    }
-
-    public async Task<int> AddAsync(User user)
-    {
-        var sql = "INSERT INTO users (username, email, created_at) VALUES (@Username, @Email, @CreatedAt); SELECT last_insert_rowid();";
-        var id = await _db.ExecuteScalarAsync<long>(sql, user);
-        return (int)id;
-    }
-
-    public async Task<User?> GetByIdAsync(int id)
-    {
-        var sql = "SELECT id as Id, username as Username, email as Email, created_at as CreatedAt FROM users WHERE id = @Id";
-        return await _db.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
-    }
-
-    public async Task<IEnumerable<User>> GetAllAsync()
-    {
-        var sql = "SELECT id as Id, username as Username, email as Email, created_at as CreatedAt FROM users";
-        return await _db.QueryAsync<User>(sql);
-    }
-
-    public async Task UpdateAsync(User user)
-    {
-        var sql = "UPDATE users SET username = @Username, email = @Email WHERE id = @Id";
-        await _db.ExecuteAsync(sql, user);
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var sql = "DELETE FROM users WHERE id = @Id";
-        await _db.ExecuteAsync(sql, new { Id = id });
     }
 
     public async Task<UserStats?> GetStatsAsync(int userId)
