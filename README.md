@@ -2,6 +2,17 @@
 
 This repository contains a minimal front‑end built with Vue.js and Tailwind CSS plus a FastAPI backend and a .NET console application.
 
+## Quick Start
+
+The repository includes a helper script that builds and launches every component. Run it from the project root:
+
+```bash
+./run_all.sh
+```
+
+The script starts the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end.
+Use `./run_logged.sh` if you want the same process to log output to `run.log`.
+
 ## Getting Started
 
 1. Serve the Vue.js front-end from the `vue/` directory:
@@ -107,10 +118,7 @@ To build and launch all parts of the project at once run:
 ./run_all.sh
 ```
 
-This script sequentially builds the .NET console app, installs Python
-dependencies and starts the FastAPI API, then serves the Vue.js front‑end.
-The backend server stops automatically when you exit the HTTP server.
-
+The script sequentially builds the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end. Use `./run_logged.sh` to run the same process with output logged to `run.log`. The backend server stops automatically when you exit the HTTP server.
 On Windows you can run the commands from `run_all.sh` in PowerShell or use
 WSL to execute the script directly. Running them in order ensures all
 dependencies are restored.
