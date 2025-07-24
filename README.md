@@ -87,4 +87,23 @@ Launch the environment with the [devcontainer CLI](https://containers.dev/cli):
 devcontainer up
 ```
 
+## Running Everything Together
+
+To build and launch all parts of the project at once run:
+
+```bash
+./run_all.sh
+```
+
+This script sequentially builds the .NET console app, installs Python
+dependencies and starts the FastAPI API, then launches the Flutter web
+application. The backend server stops automatically when you exit the
+Flutter process.
+
+Background tasks that summarize entries can be started separately using
+
+```bash
+celery -A backend.app.tasks worker --beat
+```
+
 
