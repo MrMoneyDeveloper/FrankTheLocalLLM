@@ -12,3 +12,6 @@ bin/
 obj/
 *.db
 
+
+# Logs
+run.log
