@@ -57,8 +57,12 @@ A .NET console application demonstrates SQLite data access using Dapper followin
 
 ### Setup
 
-1. Install the .NET SDK 8.0 or newer.
-2. Restore and build the solution:
+1. Install the .NET SDK 8.0 or newer and verify the version:
+   ```bash
+   dotnet --version
+   ```
+   If the runtime loader complains about a different version (for example 9.0.1) install the matching SDK or update the `TargetFramework` in the project files.
+2. Restore and build the solution (this also installs NuGet packages if needed):
    ```bash
    dotnet build src/ConsoleAppSolution.sln -c Release
    ```
@@ -66,6 +70,16 @@ A .NET console application demonstrates SQLite data access using Dapper followin
    ```bash
    dotnet run --project src/ConsoleApp/ConsoleApp.csproj
    ```
+
+If `dotnet restore` warns that vulnerability data cannot be downloaded you can disable the audit by placing a `nuget.config` file next to the solution with:
+
+```xml
+<configuration>
+  <config>
+    <add key="VulnerabilityMode" value="Off" />
+  </config>
+</configuration>
+```
 
 By default the app stores data in `app.db`, creating the database if it does not exist.
 The infrastructure project also exposes a `UserRepository` with async CRUD
@@ -99,6 +113,10 @@ This script sequentially builds the .NET console app, installs Python
 dependencies and starts the FastAPI API, then launches the Flutter web
 application. The backend server stops automatically when you exit the
 Flutter process.
+
+On Windows you can run the commands from `run_all.sh` in PowerShell or use
+WSL to execute the script directly. Running them in order ensures all
+dependencies are restored.
 
 Background tasks that summarize entries can be started separately using
 
