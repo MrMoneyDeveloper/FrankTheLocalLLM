@@ -1,17 +1,5 @@
-# Flutter related
-.dart_tool/
-.packages
-.pub/
+# Frontend build output
 build/
-# iOS
-ios/Flutter/Generated.xcconfig
-ios/Flutter/Flutter.podspec
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-# Android
-android/.gradle/
-android/app/build/
-# Web
 web/static/
 
 # Python

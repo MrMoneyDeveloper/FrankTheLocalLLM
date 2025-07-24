@@ -20,7 +20,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Build and run the Flutter web application
+# Serve the Vue.js frontend
 
-flutter pub get
-flutter run -d chrome
+cd vue
+python -m http.server
