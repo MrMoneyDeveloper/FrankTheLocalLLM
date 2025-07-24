@@ -122,3 +122,6 @@ celery -A backend.app.tasks worker --beat
 ```
 
 
+
+## Testing
+Run `scripts/test_pipeline.sh` to lint frontend code, run vitest and pytest suites and apply SQL migrations in a container.
