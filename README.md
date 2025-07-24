@@ -17,6 +17,18 @@ This repository contains a minimal Flutter project configured with [responsive_f
 
 You can modify `lib/main.dart` to adjust breakpoints or add additional widgets.
 
+## Vue.js Demo
+
+A lightweight Vue 3 and Tailwind CSS version of the login form is located in
+`vue/`. Serve the folder with any static file server, e.g.:
+
+```bash
+cd vue && python -m http.server
+```
+
+Then open the page in your browser. The client expects the FastAPI backend to be
+available at `http://localhost:8000/api`.
+
 
 ## Backend API
 
