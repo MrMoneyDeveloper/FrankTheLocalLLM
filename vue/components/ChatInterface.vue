@@ -7,15 +7,21 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useFetch } from '../composables/useFetch'
+
 const message = ref('')
 const reply = ref('')
+
+const { data, fetchData } = useFetch(
+  '/api/chat',
+  { method: 'POST', headers: { 'Content-Type': 'application/json' } },
+  { debounce: 0 }
+)
+
 async function send() {
-  const resp = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: message.value })
-  })
-  const data = await resp.json()
-  reply.value = data.response
+  await fetchData({ body: JSON.stringify({ message: message.value }) })
+  if (data.value) {
+    reply.value = data.value.response
+  }
 }
 </script>

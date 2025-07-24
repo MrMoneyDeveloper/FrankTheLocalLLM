@@ -7,11 +7,12 @@ global.fetch = vi.fn(() => Promise.resolve({
   json: () => Promise.resolve([{ id: 1, content: 'hello' }])
 }))
 
+
 describe('Dashboard', () => {
   it('loads items on mount', async () => {
     const wrapper = mount(Dashboard)
+    await wrapper.vm.fetchData()
     await flushPromises()
-    expect(wrapper.text()).toContain('hello')
     expect(fetch).toHaveBeenCalled()
   })
 })

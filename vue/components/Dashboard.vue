@@ -7,10 +7,13 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
-const items = ref([])
-onMounted(async () => {
-  const resp = await fetch('/api/entries')
-  items.value = await resp.json()
+defineOptions({ name: 'AppDashboard' })
+import { onMounted } from 'vue'
+import { useFetch } from '../composables/useFetch'
+
+const { data: items, fetchData } = useFetch('/api/entries')
+
+onMounted(() => {
+  fetchData()
 })
 </script>
