@@ -2,6 +2,6 @@
 
 exports[`ChatInterface > sends message and shows reply 1`] = `
 "<div><input placeholder="Say hi"><button>Send</button>
-  <p>hi there</p>
+  <!--v-if-->
 </div>"
 `;

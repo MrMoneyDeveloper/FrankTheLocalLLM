@@ -1,40 +1,34 @@
-const { createApp } = Vue;
+import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { useFetch } from './composables/useFetch.js'
 
 createApp({
-  data() {
-    return {
-      username: '',
-      password: '',
-      loading: false,
-      error: null,
-      success: false
-    };
-  },
-  methods: {
-    async submit() {
-      this.error = null;
-      if (!this.username || !this.password) {
-        this.error = 'Username and password required';
-        return;
+  setup() {
+    const username = ref('')
+    const password = ref('')
+    const success = ref(false)
+
+    const { data, error, loading, fetchData } = useFetch(
+      'http://localhost:8000/api/auth/login',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' } }
+    )
+
+    const submit = async () => {
+      error.value = null
+      if (!username.value || !password.value) {
+        error.value = 'Username and password required'
+        return
       }
-      this.loading = true;
-      try {
-        const resp = await fetch('http://localhost:8000/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: this.username, password: this.password })
-        });
-        if (resp.ok) {
-          const data = await resp.json();
-          localStorage.setItem('token', data.access_token);
-          this.success = true;
-        } else {
-          this.error = 'Login failed';
-        }
-      } catch (err) {
-        this.error = 'Login failed';
+      const result = await fetchData({
+        body: JSON.stringify({ username: username.value, password: password.value })
+      })
+      if (result) {
+        localStorage.setItem('token', result.access_token)
+        success.value = true
+      } else if (!error.value) {
+        error.value = 'Login failed'
       }
-      this.loading = false;
     }
+
+    return { username, password, loading, error, success, submit }
   }
-}).mount('#app');
+}).mount('#app')
