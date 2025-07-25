@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-# Relaunch with sudo if not running as root
+# Relaunch with sudo if not running as root. If sudo is unavailable continue
 if [[ $EUID -ne 0 ]]; then
-  echo "This script requires administrative privileges. Re-running with sudo..."
-  exec sudo "$0" "$@"
+  if command -v sudo >/dev/null 2>&1; then
+    echo "This script requires administrative privileges. Re-running with sudo..."
+    exec sudo "$0" "$@"
+  else
+    echo "Warning: running without root privileges" >&2
+  fi
 fi
 
 # Ensure the backend port is free before starting
@@ -18,11 +22,15 @@ free_port() {
 
 free_port 8000
 
-# Build and run the .NET console application
-
-dotnet build src/ConsoleAppSolution.sln -c Release
-
-dotnet run --project src/ConsoleApp/ConsoleApp.csproj
+# Build and run the .NET console application if dotnet is available
+if command -v dotnet >/dev/null 2>&1; then
+  dotnet build src/ConsoleAppSolution.sln -c Release
+  dotnet run --project src/ConsoleApp/ConsoleApp.csproj &
+  DOTNET_PID=$!
+else
+  echo "dotnet not found - skipping .NET build" >&2
+  DOTNET_PID=
+fi
 
 # Install backend dependencies and launch the API
 
@@ -33,6 +41,7 @@ BACKEND_PID=$!
 
 cleanup() {
   echo "Stopping backend..."
+  [[ -n "$DOTNET_PID" ]] && kill "$DOTNET_PID"
   kill $BACKEND_PID
 }
 trap cleanup EXIT
