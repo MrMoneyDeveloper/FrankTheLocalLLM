@@ -23,4 +23,4 @@ trap cleanup EXIT
 # Serve the Vue.js frontend
 
 cd vue
-python -m http.server
+python -m http.server 8080

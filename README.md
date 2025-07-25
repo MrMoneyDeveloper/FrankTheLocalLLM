@@ -23,8 +23,11 @@ Use `./run_logged.sh` if you want the same process to log output to `run.log`.
 
 1. Serve the Vue.js front-end from the `vue/` directory:
    ```bash
-   cd vue && python -m http.server
+   cd vue
+   python -m http.server 8080
    ```
+
+   The page will be available at `http://localhost:8080`.
 
 2. In your browser open the served page. The client expects the FastAPI backend
    to be available at `http://localhost:8000/api`.
@@ -124,10 +127,8 @@ To build and launch all parts of the project at once run:
 ./run_all.sh
 ```
 
-The script sequentially builds the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end. Use `./run_logged.sh` to run the same process with output logged to `run.log`. The backend server stops automatically when you exit the HTTP server.
-On Windows you can run the commands from `run_all.sh` in PowerShell or use
-WSL to execute the script directly. Running them in order ensures all
-dependencies are restored.
+The script sequentially builds the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end on port 8080. Use `./run_logged.sh` to run the same process with output logged to `run.log`. The backend server stops automatically when you exit the HTTP server.
+On Windows run the commands from `run_all.sh` one by one in PowerShell (first `cd vue`, then `python -m http.server 8080`) or execute the script in WSL. Running them in order ensures all dependencies are restored.
 
 Background tasks that summarize entries can be started separately using
 
