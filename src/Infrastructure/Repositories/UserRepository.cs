@@ -33,6 +33,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             var columns = (await connection.QueryAsync("PRAGMA table_info(users);", transaction: transaction)).ToList();
             var hasTable = columns.Any();
             var hasEmail = columns.Any(c => string.Equals((string)c.name, "email", StringComparison.OrdinalIgnoreCase));
+            var hasCreatedAt = columns.Any(c => string.Equals((string)c.name, "created_at", StringComparison.OrdinalIgnoreCase));
 
             if (!hasTable)
             {
@@ -44,11 +45,19 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         );";
                 await connection.ExecuteAsync(create, transaction: transaction);
             }
-            else if (!hasEmail)
+            else if (!hasEmail || !hasCreatedAt)
             {
                 try
                 {
-                    await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN email TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                    if (!hasEmail)
+                    {
+                        await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN email TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                    }
+
+                    if (!hasCreatedAt)
+                    {
+                        await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN created_at TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                    }
                 }
                 catch (SqliteException ex) when (ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
                 {
