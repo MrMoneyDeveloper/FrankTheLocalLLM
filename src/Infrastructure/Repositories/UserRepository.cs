@@ -30,22 +30,24 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             await ((SqliteConnection)connection).OpenAsync();
             using var transaction = connection.BeginTransaction();
 
-            var columns = (await connection.QueryAsync("PRAGMA table_info(users);", transaction: transaction)).ToList();
-            var hasTable = columns.Any();
-            var hasEmail = columns.Any(c => string.Equals((string)c.name, "email", StringComparison.OrdinalIgnoreCase));
-            var hasCreatedAt = columns.Any(c => string.Equals((string)c.name, "created_at", StringComparison.OrdinalIgnoreCase));
+        var columns = (await connection.QueryAsync("PRAGMA table_info(users);", transaction: transaction)).ToList();
+        var hasTable = columns.Any();
+        var hasEmail = columns.Any(c => string.Equals((string)c.name, "email", StringComparison.OrdinalIgnoreCase));
+        var hasCreatedAt = columns.Any(c => string.Equals((string)c.name, "created_at", StringComparison.OrdinalIgnoreCase));
+        var hasHashedPassword = columns.Any(c => string.Equals((string)c.name, "hashed_password", StringComparison.OrdinalIgnoreCase));
 
             if (!hasTable)
             {
                 var create = @"CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
+            hashed_password TEXT NOT NULL,
             email TEXT NOT NULL,
             created_at TEXT NOT NULL
         );";
                 await connection.ExecuteAsync(create, transaction: transaction);
             }
-            else if (!hasEmail || !hasCreatedAt)
+            else if (!hasEmail || !hasCreatedAt || !hasHashedPassword)
             {
                 try
                 {
@@ -57,6 +59,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
                     if (!hasCreatedAt)
                     {
                         await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN created_at TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                    }
+
+                    if (!hasHashedPassword)
+                    {
+                        await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN hashed_password TEXT NOT NULL DEFAULT '';", transaction: transaction);
                     }
                 }
                 catch (SqliteException ex) when (ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
@@ -82,6 +89,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL UNIQUE,
+            hashed_password TEXT NOT NULL,
             email TEXT NOT NULL,
             created_at TEXT NOT NULL
         );
