@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+# Relaunch with sudo if not running as root
+if [[ $EUID -ne 0 ]]; then
+  echo "This script requires administrative privileges. Re-running with sudo..."
+  exec sudo "$0" "$@"
+fi
+
 # Ensure the backend port is free before starting
 free_port() {
   local port=$1
