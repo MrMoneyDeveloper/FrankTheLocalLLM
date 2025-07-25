@@ -38,14 +38,24 @@ foreach (var item in items)
 
 var userRepo = provider.GetRequiredService<IUserRepository>();
 await userRepo.InitializeAsync();
-var userId = await userRepo.AddAsync(new User
+var existing = await userRepo.GetByUsernameAsync("alice");
+int userId;
+if (existing != null)
 {
-    Username = "alice",
-    HashedPassword = "dummy",
-    Email = "alice@example.com",
-    CreatedAt = DateTime.UtcNow
-});
-Console.WriteLine($"Inserted User with Id {userId}");
+    userId = existing.Id;
+    Console.WriteLine($"Using existing user with Id {userId}");
+}
+else
+{
+    userId = await userRepo.AddAsync(new User
+    {
+        Username = "alice",
+        HashedPassword = "dummy",
+        Email = "alice@example.com",
+        CreatedAt = DateTime.UtcNow
+    });
+    Console.WriteLine($"Inserted User with Id {userId}");
+}
 var stats = await userRepo.GetStatsAsync(userId);
 if (stats != null)
 {
