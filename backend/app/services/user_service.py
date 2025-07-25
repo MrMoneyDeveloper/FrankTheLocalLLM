@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
-
 from .. import schemas, dependencies
 
+
 router = APIRouter(tags=["user"], prefix="/user")
+
 
 
 @router.get("/me", response_model=schemas.UserRead)

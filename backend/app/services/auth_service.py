@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from .. import models, schemas, security, dependencies
 
+
 router = APIRouter(tags=["auth"], prefix="/auth")
 
 

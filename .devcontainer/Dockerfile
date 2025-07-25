@@ -5,13 +5,12 @@ RUN apt-get update \
         sqlite3 curl git unzip xz-utils ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Flutter
-ENV FLUTTER_HOME=/opt/flutter
-RUN curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.22.0-stable.tar.xz -o flutter.tar.xz \
-    && mkdir -p $FLUTTER_HOME \
-    && tar -xJf flutter.tar.xz -C $FLUTTER_HOME --strip-components=1 \
-    && rm flutter.tar.xz
-ENV PATH=${FLUTTER_HOME}/bin:$PATH
+
+# Install Node.js for Vue development
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get update \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Ollama
 RUN curl -fsSL https://ollama.ai/install.sh | sh

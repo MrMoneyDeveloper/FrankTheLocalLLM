@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ChatInterface > sends message and shows reply 1`] = `
+"<div><input placeholder="Say hi"><button>Send</button>
+  <!--v-if-->
+</div>"
+`;

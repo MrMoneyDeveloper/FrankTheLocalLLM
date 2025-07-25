@@ -1,0 +1,29 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run lint
+      - run: npm test -- --run
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r backend/requirements.txt
+      - run: pip install pytest-benchmark
+      - run: pytest backend/tests/test_bench.py --benchmark-compare --benchmark-compare-fail=mean:10%
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet run -c Release --project src/Benchmarks/Benchmarks.csproj
+      - run: python scripts/compare_benchmarkdotnet.py src/Benchmarks/baseline.csv BenchmarkDotNet.Artifacts/results/DapperBenchmarks-report.csv

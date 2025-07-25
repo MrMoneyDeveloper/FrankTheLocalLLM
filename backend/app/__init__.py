@@ -10,6 +10,7 @@ from .services.user_service import router as user_router
 from .services.agent_service import router as agent_router
 from .services.chat_service import router as chat_router
 
+
 settings = Settings()
 
 app = FastAPI(title=settings.app_name, debug=settings.debug)
@@ -30,3 +31,4 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 app.include_router(agent_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
+
