@@ -5,8 +5,8 @@
         "machine": "x86_64",
         "python_compiler": "GCC 13.3.0",
         "python_implementation": "CPython",
-        "python_implementation_version": "3.13.3",
-        "python_version": "3.13.3",
+        "python_implementation_version": "3.11.13",
+        "python_version": "3.11.13",
         "python_build": [
             "main",
             "Jul 23 2025 23:57:02"
@@ -14,7 +14,7 @@
         "release": "6.12.13",
         "system": "Linux",
         "cpu": {
-            "python_version": "3.13.3.final.0 (64 bit)",
+            "python_version": "3.11.13.final.0 (64 bit)",
             "cpuinfo_version": [
                 9,
                 0,
