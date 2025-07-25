@@ -13,6 +13,8 @@ public class LoggingDataAccess
         _factory = factory;
     }
 
+    public IDbConnection CreateConnection() => _factory.CreateConnection();
+
     public async Task InitializeAsync()
     {
         using var connection = _factory.CreateConnection();

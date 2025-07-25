@@ -2,17 +2,73 @@ using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Dapper;
+using Microsoft.Data.Sqlite;
+using System.Data;
+using System.Linq;
+using System.Threading;
 
 namespace Infrastructure.Repositories;
 
 public class UserRepository : BaseRepository<User>, IUserRepository
 {
+    private static readonly SemaphoreSlim _migrationLock = new(1, 1);
+    private static bool _schemaEnsured;
+
     public UserRepository(LoggingDataAccess db) : base(db, "users")
     {
     }
 
+    private async Task EnsureSchemaAsync()
+    {
+        if (_schemaEnsured) return;
+        await _migrationLock.WaitAsync();
+        try
+        {
+            if (_schemaEnsured) return;
+
+            using var connection = _db.CreateConnection();
+            await ((SqliteConnection)connection).OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            var columns = (await connection.QueryAsync("PRAGMA table_info(users);", transaction: transaction)).ToList();
+            var hasTable = columns.Any();
+            var hasEmail = columns.Any(c => string.Equals((string)c.name, "email", StringComparison.OrdinalIgnoreCase));
+
+            if (!hasTable)
+            {
+                var create = @"CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );";
+                await connection.ExecuteAsync(create, transaction: transaction);
+            }
+            else if (!hasEmail)
+            {
+                try
+                {
+                    await connection.ExecuteAsync("ALTER TABLE users ADD COLUMN email TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
+                {
+                    // ignore if column already exists
+                }
+            }
+
+            transaction.Commit();
+            _schemaEnsured = true;
+        }
+        finally
+        {
+            _migrationLock.Release();
+        }
+    }
+
     public async Task InitializeAsync()
     {
+        await EnsureSchemaAsync();
+
         var sql = @"
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
