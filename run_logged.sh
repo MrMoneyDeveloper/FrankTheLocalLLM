@@ -30,9 +30,9 @@ BACKEND_PID=$!
 
 # Serve Vue frontend
 echo "[FRONTEND SERVE]"
-cd vue
-python -m http.server &
-FRONTEND_PID=$!
+  cd vue
+  python -m http.server 8080 &
+  FRONTEND_PID=$!
 cd ..
 
 cleanup() {

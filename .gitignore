@@ -16,3 +16,4 @@ obj/
 # Logs
 run.log
 node_modules/
+.benchmarks/
