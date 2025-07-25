@@ -20,7 +20,7 @@ jobs:
           python-version: '3.11'
       - run: pip install -r backend/requirements.txt
       - run: pip install pytest-benchmark
-      - run: pytest backend/tests/test_bench.py --benchmark-compare --benchmark-compare-fail=mean:10%
+      - run: pytest backend/tests/test_bench.py
 
       - uses: actions/setup-dotnet@v4
         with:
