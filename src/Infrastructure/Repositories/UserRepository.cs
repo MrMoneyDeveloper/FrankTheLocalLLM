@@ -126,4 +126,10 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         var sql = "SELECT UserId, Username, EntryCount, TaskCount FROM user_stats WHERE UserId = @UserId";
         return await _db.QuerySingleOrDefaultAsync<UserStats>(sql, new { UserId = userId });
     }
+
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        var sql = "SELECT * FROM users WHERE username = @Username LIMIT 1";
+        return await _db.QuerySingleOrDefaultAsync<User>(sql, new { Username = username });
+    }
 }

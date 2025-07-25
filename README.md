@@ -31,6 +31,9 @@ Use `./run_logged.sh` if you want the same process to log output to `run.log`.
 
 2. In your browser open the served page. The client expects the FastAPI backend
    to be available at `http://localhost:8000/api`.
+   If another service is already using port 8000 you can change the backend
+   port by editing `backend/app/config.py` or setting the `PORT` environment
+   variable before starting the server.
 
 You can modify `vue/index.html` and `vue/app.js` to tweak the UI or add new
 components.
@@ -139,4 +142,4 @@ celery -A backend.app.tasks worker --beat
 
 
 ## Testing
-Run `scripts/test_pipeline.sh` to lint frontend code, run vitest and pytest suites and apply SQL migrations in a container.
+Run `scripts/test_pipeline.sh` to lint frontend code, run vitest and pytest suites and apply SQL migrations in a container. If Docker is not available the migration step is skipped.
