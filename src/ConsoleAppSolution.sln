@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{AA665775-822C-4A05-A2E4-E5CC408F044D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{5A7152FC-BEC9-4605-893C-45B099F2A346}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+                {5A7152FC-BEC9-4605-893C-45B099F2A346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {5A7152FC-BEC9-4605-893C-45B099F2A346}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {5A7152FC-BEC9-4605-893C-45B099F2A346}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {5A7152FC-BEC9-4605-893C-45B099F2A346}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C863800E-2A38-434F-9952-DE08A6C0BF72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C863800E-2A38-434F-9952-DE08A6C0BF72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C863800E-2A38-434F-9952-DE08A6C0BF72}.Release|Any CPU.ActiveCfg = Release|Any CPU
