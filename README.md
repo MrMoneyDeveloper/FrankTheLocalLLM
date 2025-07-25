@@ -4,10 +4,16 @@ This repository contains a minimal front‑end built with Vue.js and Tailwind CS
 
 ## Quick Start
 
-The repository includes a helper script that builds and launches every component. Run it from the project root:
+Clone the repository and launch everything with a single command. The helper
+script automatically installs dependencies, builds the .NET project and starts
+both the backend and frontend:
 
 ```bash
 ./run_all.sh
+```
+Or clone and launch everything in one step:
+```bash
+ git clone <repository-url> FrankTheLocalLLM && cd FrankTheLocalLLM && ./run_all.sh
 ```
 
 The script starts the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end.
