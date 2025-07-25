@@ -1,6 +1,12 @@
-def fib(n):
-    return 1 if n <= 1 else fib(n-1) + fib(n-2)
+import time
 
 
-def test_fib_benchmark(benchmark):
-    benchmark(fib, 10)
+def slow_add(x: int, y: int) -> int:
+    """Simulate a slow addition"""
+    time.sleep(0.01)
+    return x + y
+
+
+def test_add_bench(benchmark):
+    result = benchmark(slow_add, 2, 3)
+    assert result == 5
