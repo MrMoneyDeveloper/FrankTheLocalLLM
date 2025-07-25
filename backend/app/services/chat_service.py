@@ -9,7 +9,34 @@ from langchain_community.llms import Ollama
 router = APIRouter(tags=["chat"], prefix="/chat")
 
 _CACHE_FILE = Path(__file__).resolve().parents[1] / "data" / "chat_cache.json"
-_llm: Ollama | None = None
+
+
+class ChatService:
+    _llm: Ollama | None = None
+    _cache: dict[str, str] | None = None
+
+    def __init__(self) -> None:
+        if self._llm is None:
+            self._llm = Ollama(model="llama3")
+        if self._cache is None:
+            self._cache = _load_cache()
+
+    def chat(self, message: str) -> dict:
+        cached = (
+            self._cache.get(message) if hasattr(self._cache, "get") else None
+        )
+        if cached is not None:
+            return {"response": cached, "cached": True}
+        try:
+            response = self._llm.invoke(message)
+        except Exception as exc:  # pragma: no cover - runtime failure
+            raise HTTPException(status_code=500, detail=str(exc))
+        if hasattr(self._cache, "set"):
+            self._cache.set(message, response)
+        else:
+            self._cache[message] = response
+            _save_cache(self._cache)
+        return {"response": response, "cached": False}
 
 
 def _load_cache() -> dict[str, str]:
@@ -25,22 +52,7 @@ def _save_cache(cache: dict[str, str]) -> None:
     _CACHE_FILE.write_text(json.dumps(cache))
 
 
-def get_llm() -> Ollama:
-    global _llm
-    if _llm is None:
-        _llm = Ollama(model="llama3")
-    return _llm
-
-
 @router.post("")
 def chat(message: str = Body(..., embed=True)):
-    cache = _load_cache()
-    if message in cache:
-        return {"response": cache[message], "cached": True}
-    try:
-        response = get_llm().invoke(message)
-    except Exception as exc:  # pragma: no cover - runtime failure
-        raise HTTPException(status_code=500, detail=str(exc))
-    cache[message] = response
-    _save_cache(cache)
-    return {"response": response, "cached": False}
+    service = ChatService()
+    return service.chat(message)

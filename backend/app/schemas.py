@@ -12,3 +12,20 @@ class UserRead(UserBase):
     class Config:
         orm_mode = True
 
+
+class EntryBase(BaseModel):
+    content: str
+
+
+class EntryCreate(EntryBase):
+    pass
+
+
+class EntryRead(EntryBase):
+    id: int
+    summary: str | None = None
+    summarized: bool
+
+    class Config:
+        orm_mode = True
+
