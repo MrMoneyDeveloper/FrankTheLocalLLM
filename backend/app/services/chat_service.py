@@ -1,33 +1,46 @@
-from pathlib import Path
-from fastapi import APIRouter, HTTPException, Body, Depends
+from __future__ import annotations
 
-from ..llm import LLMClient, OllamaLLM
-from . import CachedLLMService
+from pathlib import Path
+import json
+
+from fastapi import APIRouter, Body, HTTPException
+from langchain_community.llms import Ollama
 
 router = APIRouter(tags=["chat"], prefix="/chat")
 
+_CACHE_FILE = Path(__file__).resolve().parents[1] / "data" / "chat_cache.json"
+_llm: Ollama | None = None
 
-class ChatService(CachedLLMService):
-    _llm: LLMClient | None = None  # allow monkeypatching in tests
-    _cache = None  # compat for tests
 
-    def __init__(self, llm: LLMClient):
-        super().__init__(llm)
-
-    def chat(self, message: str) -> dict:
+def _load_cache() -> dict[str, str]:
+    if _CACHE_FILE.exists():
         try:
-            response = self.llm_invoke(message)
-            cached = self.was_cached()
-        except Exception as exc:  # pragma: no cover - runtime failure
-            raise HTTPException(status_code=500, detail=str(exc))
-        return {"response": response, "cached": cached}
+            return json.loads(_CACHE_FILE.read_text())
+        except json.JSONDecodeError:  # pragma: no cover - corrupted file
+            return {}
+    return {}
 
 
-def get_service() -> ChatService:
-    llm = OllamaLLM()
-    return ChatService(llm)
+def _save_cache(cache: dict[str, str]) -> None:
+    _CACHE_FILE.write_text(json.dumps(cache))
 
 
-@router.post("/")
-def chat(message: str = Body(..., embed=True), service: ChatService = Depends(get_service)):
-    return service.chat(message)
+def get_llm() -> Ollama:
+    global _llm
+    if _llm is None:
+        _llm = Ollama(model="llama3")
+    return _llm
+
+
+@router.post("")
+def chat(message: str = Body(..., embed=True)):
+    cache = _load_cache()
+    if message in cache:
+        return {"response": cache[message], "cached": True}
+    try:
+        response = get_llm().invoke(message)
+    except Exception as exc:  # pragma: no cover - runtime failure
+        raise HTTPException(status_code=500, detail=str(exc))
+    cache[message] = response
+    _save_cache(cache)
+    return {"response": response, "cached": False}

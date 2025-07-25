@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean
+
+from sqlalchemy import Column, Integer, String
+
 
 from .db import Base
 
@@ -9,7 +11,6 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
 
-
 class Entry(Base):
     __tablename__ = "entries"
 
@@ -17,3 +18,4 @@ class Entry(Base):
     content = Column(String, nullable=False)
     summary = Column(String, nullable=True)
     summarized = Column(Boolean, default=False)
+
