@@ -1,6 +1,17 @@
 #!/usr/bin/env bash
 set -e
 
+# Ensure the backend port is free before starting
+free_port() {
+  local port=$1
+  if lsof -ti tcp:"$port" > /dev/null 2>&1; then
+    echo "Port $port in use - terminating process"
+    lsof -ti tcp:"$port" | xargs kill -9
+  fi
+}
+
+free_port 8000
+
 # Build and run the .NET console application
 
 dotnet build src/ConsoleAppSolution.sln -c Release
