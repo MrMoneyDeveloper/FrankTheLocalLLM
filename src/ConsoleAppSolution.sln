@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmarks", "Benchmarks\Benchmarks.csproj", "{5A7152FC-BEC9-4605-893C-45B099F2A346}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Tests", "Infrastructure.Tests\Infrastructure.Tests.csproj", "{9F67C2AE-5278-4292-806A-2E97DB718AB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,7 +36,11 @@ Global
 		{79A22D90-3A97-441E-971D-C0F38F0EAE0A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA665775-822C-4A05-A2E4-E5CC408F044D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA665775-822C-4A05-A2E4-E5CC408F044D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA665775-822C-4A05-A2E4-E5CC408F044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA665775-822C-4A05-A2E4-E5CC408F044D}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
+                {AA665775-822C-4A05-A2E4-E5CC408F044D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {AA665775-822C-4A05-A2E4-E5CC408F044D}.Release|Any CPU.Build.0 = Release|Any CPU
+                {9F67C2AE-5278-4292-806A-2E97DB718AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+                {9F67C2AE-5278-4292-806A-2E97DB718AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+                {9F67C2AE-5278-4292-806A-2E97DB718AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+                {9F67C2AE-5278-4292-806A-2E97DB718AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+        EndGlobalSection
 EndGlobal
