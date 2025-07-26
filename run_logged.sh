@@ -61,6 +61,39 @@ echo "[FRONTEND SERVE]"
   FRONTEND_PID=$!
 cd ..
 
+# Helper to open the default browser on the correct platform
+open_browser() {
+  local url="http://localhost:8080"
+  case "$(uname)" in
+    Darwin*) cmd="open" ;;
+    CYGWIN*|MINGW*|MSYS*) cmd="cmd.exe /c start" ;;
+    *) cmd="xdg-open" ;;
+  esac
+
+  if command -v ${cmd%% *} >/dev/null 2>&1; then
+    $cmd "$url" >/dev/null 2>&1 &
+  else
+    echo "Please open $url in your browser." >&2
+  fi
+}
+
+echo
+echo "Servers are running. How would you like to open the UI?"
+echo "1) Open in browser"
+echo "2) Run Tauri application"
+read -rp "Selection [1/2]: " choice
+
+if [[ $choice == 2 ]]; then
+  if command -v cargo >/dev/null 2>&1; then
+    (cd tauri && cargo tauri dev)
+    exit 0
+  else
+    echo "cargo not found - opening browser instead." >&2
+  fi
+fi
+
+open_browser
+
 cleanup() {
   echo "[CLEANUP]"
   [[ -n "$DOTNET_PID" ]] && kill "$DOTNET_PID"
