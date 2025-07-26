@@ -13,7 +13,7 @@ public class UserRepositoryMigrationTests
     [Fact]
     public async Task AddsEmailColumnToLegacySchema()
     {
-        var connString = "Data Source=mem.db;Mode=Memory;Cache=Shared";
+        var connString = "Data Source=mem_users.db;Mode=Memory;Cache=Shared";
         using var keepAlive = new SqliteConnection(connString);
         keepAlive.Open();
 

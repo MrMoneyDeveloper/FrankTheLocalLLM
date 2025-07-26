@@ -11,7 +11,7 @@ public class SchemaMigrationTests
     [Fact]
     public async Task MigratesLegacySchema()
     {
-        var connString = "Data Source=mem.db;Mode=Memory;Cache=Shared";
+        var connString = "Data Source=mem_schema.db;Mode=Memory;Cache=Shared";
         using var keepAlive = new SqliteConnection(connString);
         keepAlive.Open();
 
@@ -22,8 +22,7 @@ public class SchemaMigrationTests
         );";
         var legacyEntries = @"CREATE TABLE entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            content TEXT NOT NULL,
-            created_at TEXT NOT NULL
+            content TEXT NOT NULL
         );";
         keepAlive.Execute(legacyUsers);
         keepAlive.Execute(legacyEntries);
@@ -46,5 +45,6 @@ public class SchemaMigrationTests
 
         Assert.Contains("email", userCols);
         Assert.Contains("tags", entryCols);
+        Assert.Contains("created_at", entryCols);
     }
 }

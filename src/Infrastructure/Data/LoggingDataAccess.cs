@@ -33,19 +33,10 @@ public class LoggingDataAccess
             await ((SqliteConnection)connection).OpenAsync();
             using var transaction = connection.BeginTransaction();
 
-            var columns = (await connection.QueryAsync("PRAGMA table_info(entries);", transaction: transaction)).ToList();
-            var hasTags = columns.Any(c => string.Equals((string)c.name, "tags", StringComparison.OrdinalIgnoreCase));
-            if (columns.Any() && !hasTags)
-            {
-                try
-                {
-                    await connection.ExecuteAsync("ALTER TABLE entries ADD COLUMN tags TEXT NOT NULL DEFAULT '';", transaction: transaction);
-                }
-                catch (SqliteException ex) when (ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
-                {
-                    // ignore if column already exists
-                }
-            }
+            await EnsureColumnAsync(connection, "entries", "tags",
+                "TEXT NOT NULL DEFAULT ''");
+            await EnsureColumnAsync(connection, "entries", "created_at",
+                "TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ'))");
 
             transaction.Commit();
             _schemaEnsured = true;
@@ -53,6 +44,26 @@ public class LoggingDataAccess
         finally
         {
             _migrationLock.Release();
+        }
+    }
+
+    private static async Task EnsureColumnAsync(
+        IDbConnection conn,
+        string table,
+        string column,
+        string ddl)
+    {
+        var rows = (await conn.QueryAsync($"PRAGMA table_info({table});")).ToList();
+        if (!rows.Any()) return;
+        var exists = rows.Any(r => string.Equals((string)r.name, column, StringComparison.OrdinalIgnoreCase));
+        if (exists) return;
+        try
+        {
+            await conn.ExecuteAsync($"ALTER TABLE {table} ADD COLUMN {column} {ddl};");
+        }
+        catch (SqliteException ex) when (ex.SqliteErrorCode == 1 || ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
+        {
+            // ignore if the column already exists
         }
     }
 
@@ -97,7 +108,7 @@ public class LoggingDataAccess
         var result = await connection.ExecuteScalarAsync<T>(sql, param);
         sw.Stop();
         await LogAsync(connection, sql, sw.ElapsedMilliseconds);
-        return result;
+        return result!;
     }
 
     public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param = null)

@@ -31,9 +31,10 @@ Use `./run_logged.sh` if you want the same process to log output to `run.log`.
 
 2. In your browser open the served page. The client expects the FastAPI backend
    to be available at `http://localhost:8000/api`.
-   If another service is already using port 8000 you can change the backend
-   port by editing `backend/app/config.py` or setting the `PORT` environment
-   variable before starting the server.
+   When started the server tries to bind to port `8000` but if it is already
+   taken the process automatically increments the port until a free one is
+   found. Set the `PORT` environment variable to force a specific port or edit
+   `backend/app/config.py`.
 
 You can modify `vue/index.html` and `vue/app.js` to tweak the UI or add new
 components.
