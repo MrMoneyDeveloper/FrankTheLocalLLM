@@ -56,7 +56,7 @@ BACKEND_PID=$!
 
 # Serve Vue frontend
 echo "[FRONTEND SERVE]"
-  cd vue
+  cd app
   python -m http.server 8080 &
   FRONTEND_PID=$!
 cd ..

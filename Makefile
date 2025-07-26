@@ -1,8 +1,16 @@
-.PHONY: dev
+.PHONY: all deps frontend tauri
 
-dev:
-@docker compose up --build -d
-@sleep 5
-@docker compose exec backend python -m backend.app.manage migrate
-@docker compose exec backend python -m backend.app.manage seed
-@python -m webbrowser http://localhost:8080
+all: deps frontend tauri
+
+deps:
+yarn install
+cd backend && poetry install --no-root
+
+frontend:
+yarn workspace app build
+
+test -d tauri/dist || mkdir -p tauri/dist
+cp -r app/dist/* tauri/dist/ || true
+
+tauri:
+cd tauri && cargo build --release

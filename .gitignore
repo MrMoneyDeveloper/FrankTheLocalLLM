@@ -5,7 +5,6 @@ web/static/
 # Python
 __pycache__/
 *.pyc
-.env
 
 # .NET
 bin/
@@ -17,3 +16,7 @@ obj/
 run.log
 node_modules/
 .benchmarks/
+
+# Monorepo
+app/dist
+tauri/target
