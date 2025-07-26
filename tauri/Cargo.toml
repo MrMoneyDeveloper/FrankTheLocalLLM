@@ -1,0 +1,9 @@
+[package]
+name = "tauri"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+include_dir = "0.7"
+tauri = { version = "1", features = ["api-all"] }
