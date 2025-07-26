@@ -21,19 +21,25 @@ def port_available(host: str, port: int) -> bool:
         return True
 
 if __name__ == "__main__":
-    logger.info("Starting %s on %s:%s", settings.app_name, settings.host, settings.port)
-    if not port_available(settings.host, settings.port):
-        logger.error(
-            "Port %s is busy. Run 'netstat -aon | findstr :%s' to find the process using it or set PORT to another value.",
-            settings.port,
-            settings.port,
-        )
-        sys.exit(1)
+    port = settings.port
+    logger.info("Starting %s on %s:%s", settings.app_name, settings.host, port)
+    if not port_available(settings.host, port):
+        start = port
+        while not port_available(settings.host, port):
+            port += 1
+            if port - start > 50:
+                logger.error(
+                    "Port %s is busy and no free ports found after %s attempts.",
+                    start,
+                    port - start,
+                )
+                sys.exit(1)
+        logger.warning("Port %s busy, switching to %s", start, port)
 
 
     run(
         "backend.app:app",
         host=settings.host,
-        port=settings.port,
+        port=port,
         reload=settings.debug,
     )
