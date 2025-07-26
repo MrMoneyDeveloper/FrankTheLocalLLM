@@ -27,6 +27,14 @@ await db.InitializeAsync();
 var todoRepo = provider.GetRequiredService<ITodoRepository>();
 await todoRepo.InitializeAsync();
 
+// Initialize the entry repository before the user repository so
+// the `entries` table has the required columns when the
+// `user_stats` view is created. Older databases may lack the
+// `user_id` column, which would cause queries against the view to
+// fail with a "no such column" error.
+var entryRepo = provider.GetRequiredService<IEntryRepository>();
+await entryRepo.InitializeAsync();
+
 var todoId = await todoRepo.AddAsync(new TodoItem { Title = "Learn Dapper", IsCompleted = false });
 Console.WriteLine($"Inserted Todo with Id {todoId}");
 
@@ -62,8 +70,7 @@ if (stats != null)
     Console.WriteLine($"Stats for {stats.Username}: Entries={stats.EntryCount}, Tasks={stats.TaskCount}");
 }
 
-var entryRepo = provider.GetRequiredService<IEntryRepository>();
-await entryRepo.InitializeAsync();
+// `entryRepo` was initialized earlier. Use it now to insert and query entries.
 var entryId = await entryRepo.AddAsync(new Entry { UserId = userId, Content = "First post", Tags = "intro,example", CreatedAt = DateTime.UtcNow });
 Console.WriteLine($"Inserted Entry with Id {entryId}");
 
