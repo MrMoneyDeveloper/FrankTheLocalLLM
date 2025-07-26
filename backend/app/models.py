@@ -1,5 +1,8 @@
 
-from sqlalchemy import Column, Integer, String, Boolean
+from datetime import datetime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from pgvector.sqlalchemy import Vector
 
 
 from .db import Base
@@ -18,4 +21,52 @@ class Entry(Base):
     content = Column(String, nullable=False)
     summary = Column(String, nullable=True)
     summarized = Column(Boolean, default=False)
+
+
+class File(Base):
+    __tablename__ = "files"
+
+    id = Column(Integer, primary_key=True)
+    path = Column(String, unique=True, nullable=False)
+    name = Column(String, nullable=False)
+
+
+class Chunk(Base):
+    __tablename__ = "chunks"
+
+    id = Column(Integer, primary_key=True)
+    file_id = Column(Integer, ForeignKey("files.id"))
+    content = Column(String, nullable=False)
+    content_hash = Column(String, unique=True, index=True)
+    start_line = Column(Integer)
+    end_line = Column(Integer)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    file = relationship("File")
+
+
+class Embedding(Base):
+    __tablename__ = "embeddings"
+
+    id = Column(Integer, primary_key=True)
+    chunk_id = Column(Integer, ForeignKey("chunks.id"))
+    vector = Column(Vector(1536))
+    chunk = relationship("Chunk")
+
+
+class DailySummary(Base):
+    __tablename__ = "daily_summaries"
+
+    id = Column(Integer, primary_key=True)
+    summary_date = Column(DateTime, default=datetime.utcnow)
+    summary = Column(String, nullable=False)
+    token_count = Column(Integer)
+
+
+class Backlink(Base):
+    __tablename__ = "backlinks"
+
+    id = Column(Integer, primary_key=True)
+    source_id = Column(Integer, ForeignKey("chunks.id"))
+    target_id = Column(Integer, ForeignKey("chunks.id"))
 

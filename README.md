@@ -39,6 +39,18 @@ Use `./run_logged.sh` if you want the same process to log output to `run.log`.
 You can modify `vue/index.html` and `vue/app.js` to tweak the UI or add new
 components.
 
+## Docker Compose Stack
+
+Run the full stack in one shot using Docker Compose and the provided Makefile:
+
+```bash
+make dev
+```
+
+This launches Postgres with pgvector, Redis, the FastAPI API plus Celery worker,
+an Ollama instance and the Vue front-end. The `dev` target runs database
+migrations, seeds a sample Markdown note and opens the UI in your browser.
+
 
 ## Backend API
 
@@ -71,6 +83,12 @@ curl "http://localhost:8000/api/trivia?q=What is the largest planet?"
 
 Make sure to install the new Python dependencies and have an Ollama model (for
 example `llama3`) available.
+
+### Retrieval QA
+
+The `/api/qa/stream` endpoint streams answers from a LangChain RetrievalQA chain
+backed by pgvector. Results include markdown formatted citations linking to the
+original note.
 
 
 ## Console Service
@@ -139,6 +157,15 @@ Background tasks that summarize entries can be started separately using
 ```bash
 celery -A backend.app.tasks worker --beat
 ```
+The worker also schedules a nightly digest summarizing new chunks and maintains
+wiki-style backlinks between notes.
+
+### Importing Data
+
+Upload a ZIP archive to `/api/import` containing Markdown or PDF files. The
+server extracts each document, splits it by headings, de-duplicates chunks and
+queues embedding jobs in Celery. Vectors are stored in Postgres using the
+pgvector extension.
 
 
 

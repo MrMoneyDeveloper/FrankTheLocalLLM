@@ -1,5 +1,6 @@
 import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 import { useFetch } from './composables/useFetch.js'
+import WikiPage from './components/WikiPage.vue'
 
 createApp({
   setup() {
@@ -31,4 +32,4 @@ createApp({
 
     return { username, password, loading, error, success, submit }
   }
-}).mount('#app')
+}).component('WikiPage', WikiPage).mount('#app')
