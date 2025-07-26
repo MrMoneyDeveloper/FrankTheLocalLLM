@@ -9,7 +9,7 @@ createApp({
     const success = ref(false)
 
     const { data, error, loading, fetchData } = useFetch(
-      'http://localhost:8000/api/auth/login',
+      '/api/auth/login',
       { method: 'POST', headers: { 'Content-Type': 'application/json' } }
     )
 
