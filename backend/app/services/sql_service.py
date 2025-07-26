@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException, Depends
-from langchain.agents import create_sql_agent
+from langchain_community.agent_toolkits.sql.base import create_sql_agent
 from langchain_community.utilities import SQLDatabase
 from langchain_community.llms import Ollama
 

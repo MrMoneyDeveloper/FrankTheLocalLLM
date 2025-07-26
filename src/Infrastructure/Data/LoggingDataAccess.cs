@@ -1,6 +1,9 @@
 using System.Data;
 using System.Diagnostics;
 using Dapper;
+using Microsoft.Data.Sqlite;
+using System.Linq;
+using System.Threading;
 
 namespace Infrastructure.Data;
 
@@ -15,8 +18,47 @@ public class LoggingDataAccess
 
     public IDbConnection CreateConnection() => _factory.CreateConnection();
 
+    private static readonly SemaphoreSlim _migrationLock = new(1, 1);
+    private static bool _schemaEnsured;
+
+    public async Task EnsureSchemaAsync()
+    {
+        if (_schemaEnsured) return;
+        await _migrationLock.WaitAsync();
+        try
+        {
+            if (_schemaEnsured) return;
+
+            using var connection = _factory.CreateConnection();
+            await ((SqliteConnection)connection).OpenAsync();
+            using var transaction = connection.BeginTransaction();
+
+            var columns = (await connection.QueryAsync("PRAGMA table_info(entries);", transaction: transaction)).ToList();
+            var hasTags = columns.Any(c => string.Equals((string)c.name, "tags", StringComparison.OrdinalIgnoreCase));
+            if (columns.Any() && !hasTags)
+            {
+                try
+                {
+                    await connection.ExecuteAsync("ALTER TABLE entries ADD COLUMN tags TEXT NOT NULL DEFAULT '';", transaction: transaction);
+                }
+                catch (SqliteException ex) when (ex.Message.Contains("duplicate", StringComparison.OrdinalIgnoreCase))
+                {
+                    // ignore if column already exists
+                }
+            }
+
+            transaction.Commit();
+            _schemaEnsured = true;
+        }
+        finally
+        {
+            _migrationLock.Release();
+        }
+    }
+
     public async Task InitializeAsync()
     {
+        await EnsureSchemaAsync();
         using var connection = _factory.CreateConnection();
         var sql = @"CREATE TABLE IF NOT EXISTS query_audit (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
