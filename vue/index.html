@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/vue@3"></script>
 </head>
 <body class="flex items-center justify-center h-screen bg-gray-100">
-  <div id="app" class="w-80 bg-white p-4 rounded shadow">
+  <div id="app" class="w-80 bg-white p-4 rounded shadow" v-if="!success">
     <form @submit.prevent="submit">
       <div class="mb-4">
         <label class="block mb-1">Username</label>
@@ -25,6 +25,9 @@
       </button>
       <div v-if="success" class="text-green-600 mt-2">Login successful!</div>
     </form>
+  </div>
+  <div v-else class="w-full h-screen">
+    <WikiPage />
   </div>
   <script type="module" src="app.js"></script>
 </body>

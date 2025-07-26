@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     debug: bool = False
     allowed_origins: list[str] = ["*"]
     redis_url: str = "redis://localhost:6379/0"
+    database_url: str = "sqlite:///./app.db"
+    model: str = "llama3"
+    retrieval_k: int = 8
+    chunk_size: int = 512
 
     class Config:
         env_file = ".env"

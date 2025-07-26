@@ -4,7 +4,18 @@ import { describe, it, expect, vi } from 'vitest'
 import flushPromises from 'flush-promises'
 
 global.fetch = vi.fn(() => Promise.resolve({
-  json: () => Promise.resolve({ response: 'hi there' })
+  body: {
+    getReader () {
+      let done = false
+      return {
+        async read () {
+          if (done) return { done: true }
+          done = true
+          return { done: false, value: new TextEncoder().encode('hi there') }
+        }
+      }
+    }
+  }
 }))
 
 describe('ChatInterface', () => {
