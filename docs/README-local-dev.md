@@ -21,8 +21,9 @@ The script will:
 1. Build and run the .NET console application if `dotnet` is available.
 2. Install Python dependencies from `backend/requirements.txt` and start the FastAPI API on port 8000.
 3. Serve the Vue.js frontend from `app/` on port 8080.
+4. Prompt you to either open the UI in your browser or launch the Tauri desktop application.
 
-Use `./run_logged.sh` to log output to `run.log` while running the same processes.
+Use `./run_logged.sh` to log output to `run.log` while running the same processes and prompt.
 
 Press `Ctrl+C` in the terminal to stop all services.
 
@@ -44,4 +45,4 @@ dotnet build src/ConsoleAppSolution.sln -c Release
 dotnet run --project src/ConsoleApp/ConsoleApp.csproj
 ```
 
-Open `http://localhost:8080` in your browser to access the UI.
+The default UI is served at `http://localhost:8080`.
