@@ -1,4 +1,4 @@
-@@ -1,173 +1,28 @@
+
 # FrankTheLocalLLM
 
 This repository contains a minimal front‑end built with Vue.js and Tailwind CSS plus a FastAPI backend and a .NET console application.
