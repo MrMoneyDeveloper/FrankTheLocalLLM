@@ -10,13 +10,15 @@ cd "$ROOT"
 mkdir -p logs
 
 # --- Helpers ---
-need_cmd() { command -v "$1" >/dev/null 2>&1 || return 0; }
+# Return 0 if the given command exists, else non-zero
+need_cmd() { command -v "$1" >/dev/null 2>&1; }
 apt_has() { dpkg -s "$1" >/dev/null 2>&1; }
 
 log() { printf "\n==== %s ====\n" "$*"; }
 
 # --- Detect Ubuntu/WSL ---
-if ! grep -qi ubuntu /etc/os-release; then
+# /etc/os-release may be missing in minimal environments; check before grepping
+if [[ ! -r /etc/os-release ]] || ! grep -qi ubuntu /etc/os-release; then
   echo "This bootstrap is tailored for Ubuntu. For other OS, ask me for the macOS/Windows variant."
   exit 1
 fi
