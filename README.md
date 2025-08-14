@@ -5,11 +5,24 @@ This repository contains a minimal front‑end built with Vue.js and Tailwind CS
 FrankTheLocalLLM combines a Vue.js + Tailwind front‑end with a FastAPI backend and a small .NET console application. It demonstrates how to run a local language‑model driven notes app with background processing and optional desktop packaging.
 
 ## Quick Start
+
+Clone the repository and launch everything with a single command. The wrapper
+script boots all services via `frank_up.sh` and cleans up with `frank_down.sh`
+when you exit:
+
+```bash
+./run_all.sh
+```
+
+You can also manage the stack manually:
+
+```bash
+./frank_up.sh   # start services
+./frank_down.sh # stop services
+```
+
 ## Features
 
-Clone the repository and launch everything with a single command. The helper
-script automatically installs dependencies, builds the .NET project and starts
-both the backend and frontend:
 - Vue front‑end served via a simple HTTP server
 - FastAPI API exposing chat, retrieval and import endpoints
 - LangChain integration with a local Ollama model
@@ -18,17 +31,16 @@ both the backend and frontend:
 - Docker Compose stack including Postgres with pgvector
 - Devcontainer configuration for offline development
 
-```bash
-./run_all.sh
-```
 Or clone and launch everything in one step:
 ```bash
  git clone <repository-url> FrankTheLocalLLM && cd FrankTheLocalLLM && ./run_all.sh
 ```
 ## Process Overview
 
-The script starts the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end.
-Use `./run_logged.sh` if you want the same process to log output to `run.log`.
+`run_all.sh` delegates to `frank_up.sh` which installs dependencies and launches
+the FastAPI backend, Celery worker and Vue.js front‑end. All output and any
+errors from the bring‑up process are written to `logs/run_all.log` for
+troubleshooting.
 1. The Vue front‑end sends requests to the FastAPI backend under `/api`.
 2. Notes are chunked and embedded into Postgres using pgvector.
 3. Retrieval endpoints stream answers from the vector store via LangChain.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 # Relaunch with sudo if not running as root. If sudo is unavailable continue
 if [[ $EUID -ne 0 ]]; then
@@ -11,40 +11,22 @@ if [[ $EUID -ne 0 ]]; then
   fi
 fi
 
-# Ensure the backend port is free before starting
-free_port() {
-  local port=$1
-  if lsof -ti tcp:"$port" > /dev/null 2>&1; then
-    echo "Port $port in use - terminating process"
-    lsof -ti tcp:"$port" | xargs kill -9
-  fi
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_DIR="$ROOT/logs"
+LOG_FILE="$LOG_DIR/run_all.log"
+mkdir -p "$LOG_DIR"
+export LOG_FILE
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+error_handler() {
+  local exit_code=$?
+  echo "Error on line $1: $2 (exit code $exit_code)" >&2
 }
+trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
+trap "$ROOT/frank_down.sh" EXIT
 
-free_port 8000
-
-# Build and run the .NET console application if dotnet is available
-if command -v dotnet >/dev/null 2>&1; then
-  dotnet build src/ConsoleAppSolution.sln -c Release
-  dotnet run --project src/ConsoleApp/ConsoleApp.csproj &
-  DOTNET_PID=$!
-else
-  echo "dotnet not found - skipping .NET build" >&2
-  DOTNET_PID=
-fi
-
-# Install backend dependencies and launch the API
-
-pip install -r backend/requirements.txt
-
-python -m backend.app.main &
-BACKEND_PID=$!
-
-# Serve the Vue.js frontend
-
-cd app
-python -m http.server 8080 &
-FRONTEND_PID=$!
-cd ..
+"$ROOT/frank_up.sh"
 
 # Helper to open the default browser on the correct platform
 open_browser() {
@@ -62,22 +44,15 @@ open_browser() {
   fi
 }
 
-cleanup() {
-  echo "Stopping backend..."
-  [[ -n "$DOTNET_PID" ]] && kill "$DOTNET_PID"
-  kill $BACKEND_PID $FRONTEND_PID
-}
-trap cleanup EXIT
-
 echo
-echo "Servers are running. How would you like to open the UI?"
+echo "Services are running. How would you like to open the UI?"
 echo "1) Open in browser"
 echo "2) Run Tauri application"
 read -rp "Selection [1/2]: " choice
 
 if [[ $choice == 2 ]]; then
   if command -v cargo >/dev/null 2>&1; then
-    (cd tauri && cargo tauri dev)
+    (cd "$ROOT/tauri" && cargo tauri dev)
     exit 0
   else
     echo "cargo not found - opening browser instead." >&2
@@ -85,4 +60,7 @@ if [[ $choice == 2 ]]; then
 fi
 
 open_browser
-wait
+
+echo "Press Ctrl+C to stop services."
+while true; do sleep 1; done
+
