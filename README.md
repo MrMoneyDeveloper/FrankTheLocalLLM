@@ -38,9 +38,11 @@ Or clone and launch everything in one step:
 ## Process Overview
 
 `run_all.sh` delegates to `frank_up.sh` which installs dependencies and launches
+
 the FastAPI backend, Celery worker and Vue.js front‑end. All output and any
 errors from the bring‑up process are written to `logs/run_all.log` for
 troubleshooting.
+
 1. The Vue front‑end sends requests to the FastAPI backend under `/api`.
 2. Notes are chunked and embedded into Postgres using pgvector.
 3. Retrieval endpoints stream answers from the vector store via LangChain.

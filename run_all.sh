@@ -12,6 +12,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 LOG_DIR="$ROOT/logs"
 LOG_FILE="$LOG_DIR/run_all.log"
 mkdir -p "$LOG_DIR"
@@ -25,6 +26,7 @@ error_handler() {
 }
 trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
 trap "$ROOT/frank_down.sh" EXIT
+
 
 "$ROOT/frank_up.sh"
 
