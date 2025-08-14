@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .middleware import ExceptionLoggingMiddleware
+
 from .config import Settings
 from .db import Base, engine
 from .services.example_service import router as example_router
@@ -25,6 +27,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(ExceptionLoggingMiddleware)
 
 # Ensure database tables exist
 Base.metadata.create_all(bind=engine)

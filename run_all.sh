@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 # Relaunch with sudo if not running as root. If sudo is unavailable continue
 if [[ $EUID -ne 0 ]]; then
@@ -12,7 +12,21 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+LOG_DIR="$ROOT/logs"
+LOG_FILE="$LOG_DIR/run_all.log"
+mkdir -p "$LOG_DIR"
+export LOG_FILE
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+
+error_handler() {
+  local exit_code=$?
+  echo "Error on line $1: $2 (exit code $exit_code)" >&2
+}
+trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
 trap "$ROOT/frank_down.sh" EXIT
+
 
 "$ROOT/frank_up.sh"
 
