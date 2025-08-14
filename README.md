@@ -8,7 +8,8 @@ FrankTheLocalLLM combines a Vue.js + Tailwind front‑end with a FastAPI backend
 
 Clone the repository and launch everything with a single command. The wrapper
 script boots all services via `frank_up.sh` and cleans up with `frank_down.sh`
-when you exit:
+when you exit. The bootstrap script currently targets Ubuntu or WSL environments,
+so other operating systems require a different setup:
 
 ```bash
 ./run_all.sh
