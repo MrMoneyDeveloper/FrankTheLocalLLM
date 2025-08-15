@@ -37,6 +37,7 @@ if (Get-Service redis -ErrorAction SilentlyContinue) {
   $redisOut = Join-Path $LogDir 'redis.out.log'
   $redisErr = Join-Path $LogDir 'redis.err.log'
   Start-Process redis-server -WindowStyle Hidden -RedirectStandardOutput $redisOut -RedirectStandardError $redisErr
+
 }
 
 if (Get-Service ollama -ErrorAction SilentlyContinue) {
@@ -45,6 +46,7 @@ if (Get-Service ollama -ErrorAction SilentlyContinue) {
   $ollamaOut = Join-Path $LogDir 'ollama.out.log'
   $ollamaErr = Join-Path $LogDir 'ollama.err.log'
   Start-Process ollama -ArgumentList 'serve' -WindowStyle Hidden -RedirectStandardOutput $ollamaOut -RedirectStandardError $ollamaErr
+
 }
 
 python -m venv .venv
@@ -72,6 +74,7 @@ Get-Content $envPath | ForEach-Object {
 $backendOut = Join-Path $LogDir 'backend.out.log'
 $backendErr = Join-Path $LogDir 'backend.err.log'
 $backend = Start-Process python -ArgumentList '-m backend.app.main' -RedirectStandardOutput $backendOut -RedirectStandardError $backendErr -WindowStyle Hidden -PassThru
+
 $backend.Id | Out-File (Join-Path $LogDir 'backend.pid')
 
 for ($i=0; $i -lt 30; $i++) {
@@ -86,6 +89,7 @@ for ($i=0; $i -lt 30; $i++) {
 $celeryOut = Join-Path $LogDir 'celery.out.log'
 $celeryErr = Join-Path $LogDir 'celery.err.log'
 $celery = Start-Process celery -ArgumentList '-A backend.app.tasks worker --beat' -RedirectStandardOutput $celeryOut -RedirectStandardError $celeryErr -WindowStyle Hidden -PassThru
+
 $celery.Id | Out-File (Join-Path $LogDir 'celery.pid')
 
 $frontDir = if (Test-Path (Join-Path $Root 'vue')) { Join-Path $Root 'vue' } elseif (Test-Path (Join-Path $Root 'app')) { Join-Path $Root 'app' } else { '' }
@@ -93,6 +97,7 @@ if ($frontDir -eq '') { Write-Error 'No frontend directory (vue/ or app/) found.
 $frontendOut = Join-Path $LogDir 'frontend.out.log'
 $frontendErr = Join-Path $LogDir 'frontend.err.log'
 $frontend = Start-Process python -ArgumentList '-m http.server 8080' -WorkingDirectory $frontDir -RedirectStandardOutput $frontendOut -RedirectStandardError $frontendErr -WindowStyle Hidden -PassThru
+
 $frontend.Id | Out-File (Join-Path $LogDir 'frontend.pid')
 
 Write-Output 'OS            : Windows'
