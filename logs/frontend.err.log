@@ -1,4 +1,0 @@
-::1 - - [15/Aug/2025 11:35:42] "GET / HTTP/1.1" 200 -
-::1 - - [15/Aug/2025 11:35:42] code 404, message File not found
-::1 - - [15/Aug/2025 11:35:42] "GET /favicon.ico HTTP/1.1" 404 -
-::1 - - [15/Aug/2025 11:35:43] "GET / HTTP/1.1" 200 -
