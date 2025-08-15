@@ -71,7 +71,8 @@ Get-Content $envPath | ForEach-Object {
 
 $backendOut = Join-Path $LogDir 'backend.out.log'
 $backendErr = Join-Path $LogDir 'backend.err.log'
-$backend = Start-Process python -ArgumentList '-m backend.app.main' -RedirectStandardOutput $backendOut -RedirectStandardError $backendErr -PassThru
+$backend = Start-Process python -ArgumentList '-m backend.app.main' -RedirectStandardOutput $backendOut -RedirectStandardError $backendErr -NoNewWindow -WindowStyle Hidden -PassThru
+
 $backend.Id | Out-File (Join-Path $LogDir 'backend.pid')
 
 for ($i=0; $i -lt 30; $i++) {
@@ -85,14 +86,16 @@ for ($i=0; $i -lt 30; $i++) {
 
 $celeryOut = Join-Path $LogDir 'celery.out.log'
 $celeryErr = Join-Path $LogDir 'celery.err.log'
-$celery = Start-Process celery -ArgumentList '-A backend.app.tasks worker --beat' -RedirectStandardOutput $celeryOut -RedirectStandardError $celeryErr -PassThru
+$celery = Start-Process celery -ArgumentList '-A backend.app.tasks worker --beat' -RedirectStandardOutput $celeryOut -RedirectStandardError $celeryErr -NoNewWindow -WindowStyle Hidden -PassThru
+
 $celery.Id | Out-File (Join-Path $LogDir 'celery.pid')
 
 $frontDir = if (Test-Path (Join-Path $Root 'vue')) { Join-Path $Root 'vue' } elseif (Test-Path (Join-Path $Root 'app')) { Join-Path $Root 'app' } else { '' }
 if ($frontDir -eq '') { Write-Error 'No frontend directory (vue/ or app/) found.'; exit 1 }
 $frontendOut = Join-Path $LogDir 'frontend.out.log'
 $frontendErr = Join-Path $LogDir 'frontend.err.log'
-$frontend = Start-Process python -ArgumentList '-m http.server 8080' -WorkingDirectory $frontDir -RedirectStandardOutput $frontendOut -RedirectStandardError $frontendErr -PassThru
+$frontend = Start-Process python -ArgumentList '-m http.server 8080' -WorkingDirectory $frontDir -RedirectStandardOutput $frontendOut -RedirectStandardError $frontendErr -NoNewWindow -WindowStyle Hidden -PassThru
+
 $frontend.Id | Out-File (Join-Path $LogDir 'frontend.pid')
 
 Write-Output 'OS            : Windows'
