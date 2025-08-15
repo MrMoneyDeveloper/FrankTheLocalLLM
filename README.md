@@ -53,9 +53,9 @@ troubleshooting.
 ## Getting Started
 ## Documentation
 
-1. Serve the Vue.js front-end from the `vue/` directory:
+1. Serve the Vue.js front-end from the `app/` directory:
    ```bash
-   cd vue
+   cd app
    python -m http.server 8080
    ```
 - [Local Development Guide](docs/README-local-dev.md) explains how to run everything unpackaged.
@@ -70,7 +70,7 @@ troubleshooting.
    found. Set the `PORT` environment variable to force a specific port or edit
    `backend/app/config.py`.
 
-You can modify `vue/index.html` and `vue/app.js` to tweak the UI or add new
+You can modify `app/index.html` and `app/app.js` to tweak the UI or add new
 components.
 
 ## Docker Compose Stack
@@ -184,7 +184,7 @@ To build and launch all parts of the project at once run:
 ```
 
 The script sequentially builds the .NET console app, installs Python dependencies, launches the FastAPI API and serves the Vue.js front-end on port 8080. Use `./run_logged.sh` to run the same process with output logged to `run.log`. The backend server stops automatically when you exit the HTTP server.
-On Windows run the commands from `run_all.sh` one by one in PowerShell (first `cd vue`, then `python -m http.server 8080`) or execute the script in WSL. Running them in order ensures all dependencies are restored.
+On Windows run the commands from `run_all.sh` one by one in PowerShell (first `cd app`, then `python -m http.server 8080`) or execute the script in WSL. Running them in order ensures all dependencies are restored.
 
 Background tasks that summarize entries can be started separately using
 

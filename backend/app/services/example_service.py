@@ -31,6 +31,13 @@ def get_service(uow: UnitOfWork = Depends(_get_uow)) -> ExampleService:
     return ExampleService(uow)
 
 
+@router.get("/")
+def api_root(service: ExampleService = Depends(get_service)):
+    """Provide a basic response for the API root path."""
+    return service.read()
+
+
 @router.get("/hello")
-def read_root(service: ExampleService = Depends(get_service)):
+def read_hello(service: ExampleService = Depends(get_service)):
+    """Retain the original example endpoint under /api/hello."""
     return service.read()
