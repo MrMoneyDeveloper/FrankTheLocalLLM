@@ -1184,3 +1184,7 @@ Services are running. Choose how to view the UI:
 2) Run the Tauri desktop application (requires Rust 'cargo')
 Selection [1/2]: Opening browser...
 Press Ctrl+C to stop services.
+Error on line 100: sleep 1 (exit code 130)
+Stopping frontend, backend, celery (and user-session ollama if present)...
+/c/Workspace/FrankTheLocalLLM/frank_down.sh: line 4: warning: command substitution: ignored null byte in input
+Error on line 1: sleep 1 (exit code 1)
