@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Ensure we're running on Ubuntu/WSL; other systems use a different bootstrap
+if [[ ! -r /etc/os-release ]] || ! grep -qi ubuntu /etc/os-release; then
+  echo "This bootstrap is tailored for Ubuntu. For other OS, use the macOS/Windows variant."
+  exit 1
+fi
+
 # Relaunch with sudo if not running as root. If sudo is unavailable continue
 if [[ $EUID -ne 0 ]]; then
   if command -v sudo >/dev/null 2>&1; then
