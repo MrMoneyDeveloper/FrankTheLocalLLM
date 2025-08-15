@@ -77,18 +77,21 @@ open_browser() {
 }
 
 echo
-echo "Services are running. How would you like to open the UI?"
-echo "1) Open in browser"
-echo "2) Run Tauri application"
+echo "Services are running. Choose how to view the UI:"
+echo "1) Open http://localhost:8080 in your default browser"
+echo "2) Run the Tauri desktop application (requires Rust 'cargo')"
 read -rp "Selection [1/2]: " choice
 
 if [[ $choice == 2 ]]; then
+  echo "Launching Tauri application..."
   if command -v cargo >/dev/null 2>&1; then
     (cd "$ROOT/tauri" && cargo tauri dev)
     exit 0
   else
     echo "cargo not found - opening browser instead." >&2
   fi
+else
+  echo "Opening browser..."
 fi
 
 open_browser
