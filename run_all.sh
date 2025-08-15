@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 LOG_DIR="$ROOT/logs"
@@ -12,11 +11,10 @@ export LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=== run_all.sh started at $(date) ==="
 
-
 # Ensure we're running on Ubuntu/WSL; other systems use a different bootstrap
 if [[ ! -r /etc/os-release ]] || ! grep -qi ubuntu /etc/os-release; then
-  echo "This bootstrap is tailored for Ubuntu. For other OS, use the macOS/Windows variant."
-  exit 1
+  echo "This bootstrap is tailored for Ubuntu. For other OS, ask me for the macOS/Windows variant."
+  exit 0
 fi
 
 # Relaunch with sudo if not running as root. If sudo is unavailable continue
@@ -28,6 +26,7 @@ if [[ $EUID -ne 0 ]]; then
     echo "Warning: running without root privileges" >&2
   fi
 fi
+
 
 error_handler() {
   local exit_code=$?
