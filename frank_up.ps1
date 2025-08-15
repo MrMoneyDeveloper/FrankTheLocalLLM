@@ -34,20 +34,24 @@ Install-IfMissing ollama 'Ollama.Ollama' 'ollama'
 if (Get-Service redis -ErrorAction SilentlyContinue) {
   Start-Service redis
 } elseif (Need-Cmd 'redis-server') {
-  Start-Process redis-server -NoNewWindow -RedirectStandardOutput (Join-Path $LogDir 'redis.log') -RedirectStandardError (Join-Path $LogDir 'redis.log')
+  $redisOut = Join-Path $LogDir 'redis.out.log'
+  $redisErr = Join-Path $LogDir 'redis.err.log'
+  Start-Process redis-server -NoNewWindow -WindowStyle Hidden -RedirectStandardOutput $redisOut -RedirectStandardError $redisErr
 }
 
 if (Get-Service ollama -ErrorAction SilentlyContinue) {
   Start-Service ollama
 } elseif (Need-Cmd 'ollama') {
-  Start-Process ollama -ArgumentList 'serve' -NoNewWindow -RedirectStandardOutput (Join-Path $LogDir 'ollama.log') -RedirectStandardError (Join-Path $LogDir 'ollama.log')
+  $ollamaOut = Join-Path $LogDir 'ollama.out.log'
+  $ollamaErr = Join-Path $LogDir 'ollama.err.log'
+  Start-Process ollama -ArgumentList 'serve' -NoNewWindow -WindowStyle Hidden -RedirectStandardOutput $ollamaOut -RedirectStandardError $ollamaErr
 }
 
 python -m venv .venv
 $activate = [IO.Path]::Combine($Root,'.venv','Scripts','Activate.ps1')
 . $activate
-pip install --upgrade pip
-pip install -r backend/requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r backend/requirements.txt
 
 $envPath = Join-Path $Root '.env'
 if (-not (Test-Path $envPath)) {
@@ -65,8 +69,9 @@ Get-Content $envPath | ForEach-Object {
   [Environment]::SetEnvironmentVariable($pair[0], $pair[1])
 }
 
-$backendLog = Join-Path $LogDir 'backend.log'
-$backend = Start-Process python -ArgumentList '-m backend.app.main' -RedirectStandardOutput $backendLog -RedirectStandardError $backendLog -PassThru
+$backendOut = Join-Path $LogDir 'backend.out.log'
+$backendErr = Join-Path $LogDir 'backend.err.log'
+$backend = Start-Process python -ArgumentList '-m backend.app.main' -RedirectStandardOutput $backendOut -RedirectStandardError $backendErr -PassThru
 $backend.Id | Out-File (Join-Path $LogDir 'backend.pid')
 
 for ($i=0; $i -lt 30; $i++) {
@@ -78,14 +83,16 @@ for ($i=0; $i -lt 30; $i++) {
   }
 }
 
-$celeryLog = Join-Path $LogDir 'celery.log'
-$celery = Start-Process celery -ArgumentList '-A backend.app.tasks worker --beat' -RedirectStandardOutput $celeryLog -RedirectStandardError $celeryLog -PassThru
+$celeryOut = Join-Path $LogDir 'celery.out.log'
+$celeryErr = Join-Path $LogDir 'celery.err.log'
+$celery = Start-Process celery -ArgumentList '-A backend.app.tasks worker --beat' -RedirectStandardOutput $celeryOut -RedirectStandardError $celeryErr -PassThru
 $celery.Id | Out-File (Join-Path $LogDir 'celery.pid')
 
 $frontDir = if (Test-Path (Join-Path $Root 'vue')) { Join-Path $Root 'vue' } elseif (Test-Path (Join-Path $Root 'app')) { Join-Path $Root 'app' } else { '' }
 if ($frontDir -eq '') { Write-Error 'No frontend directory (vue/ or app/) found.'; exit 1 }
-$frontendLog = Join-Path $LogDir 'frontend.log'
-$frontend = Start-Process python -ArgumentList '-m http.server 8080' -WorkingDirectory $frontDir -RedirectStandardOutput $frontendLog -RedirectStandardError $frontendLog -PassThru
+$frontendOut = Join-Path $LogDir 'frontend.out.log'
+$frontendErr = Join-Path $LogDir 'frontend.err.log'
+$frontend = Start-Process python -ArgumentList '-m http.server 8080' -WorkingDirectory $frontDir -RedirectStandardOutput $frontendOut -RedirectStandardError $frontendErr -PassThru
 $frontend.Id | Out-File (Join-Path $LogDir 'frontend.pid')
 
 Write-Output 'OS            : Windows'
