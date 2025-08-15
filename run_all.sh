@@ -11,14 +11,28 @@ export LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=== run_all.sh started at $(date) ==="
 
-# Ensure we're running on Ubuntu/WSL; other systems use a different bootstrap
-if [[ ! -r /etc/os-release ]] || ! grep -qi ubuntu /etc/os-release; then
-  echo "This bootstrap is tailored for Ubuntu. For other OS, ask me for the macOS/Windows variant."
-  exit 0
-fi
 
-# Relaunch with sudo if not running as root. If sudo is unavailable continue
-if [[ $EUID -ne 0 ]]; then
+# Determine supported platform (Ubuntu/WSL or Windows)
+case "$(uname)" in
+  Linux*)
+    if [[ -r /etc/os-release ]] && grep -qi ubuntu /etc/os-release; then
+      PLATFORM="ubuntu"
+    else
+      echo "This bootstrap currently supports Ubuntu and Windows."
+      exit 0
+    fi
+    ;;
+  CYGWIN*|MINGW*|MSYS*)
+    PLATFORM="windows"
+    ;;
+  *)
+    echo "This bootstrap currently supports Ubuntu and Windows."
+    exit 0
+    ;;
+esac
+
+# Relaunch with sudo if not running as root on Ubuntu. If sudo is unavailable continue
+if [[ $PLATFORM == "ubuntu" && $EUID -ne 0 ]]; then
   if command -v sudo >/dev/null 2>&1; then
     echo "This script requires administrative privileges. Re-running with sudo..."
     exec sudo "$0" "$@"
@@ -36,8 +50,15 @@ trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
 trap "$ROOT/frank_down.sh" EXIT
 
 
-echo "--- Running frank_up.sh ---"
-"$ROOT/frank_up.sh"
+
+if [[ $PLATFORM == "ubuntu" ]]; then
+  echo "--- Running frank_up.sh ---"
+  "$ROOT/frank_up.sh"
+else
+  echo "--- Running frank_up.ps1 ---"
+  powershell.exe -ExecutionPolicy Bypass -File "$ROOT/frank_up.ps1"
+fi
+
 
 # Helper to open the default browser on the correct platform
 open_browser() {
