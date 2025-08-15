@@ -27,6 +27,7 @@ if [[ $EUID -ne 0 ]]; then
   fi
 fi
 
+
 error_handler() {
   local exit_code=$?
   echo "Error on line $1: $2 (exit code $exit_code)" >&2
