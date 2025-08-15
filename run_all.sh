@@ -11,6 +11,7 @@ export LOG_FILE
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=== run_all.sh started at $(date) ==="
 
+
 # Determine supported platform (Ubuntu/WSL or Windows)
 case "$(uname)" in
   Linux*)
@@ -40,12 +41,14 @@ if [[ $PLATFORM == "ubuntu" && $EUID -ne 0 ]]; then
   fi
 fi
 
+
 error_handler() {
   local exit_code=$?
   echo "Error on line $1: $2 (exit code $exit_code)" >&2
 }
 trap 'error_handler ${LINENO} "$BASH_COMMAND"' ERR
 trap "$ROOT/frank_down.sh" EXIT
+
 
 
 if [[ $PLATFORM == "ubuntu" ]]; then
@@ -55,6 +58,7 @@ else
   echo "--- Running frank_up.ps1 ---"
   powershell.exe -ExecutionPolicy Bypass -File "$ROOT/frank_up.ps1"
 fi
+
 
 # Helper to open the default browser on the correct platform
 open_browser() {
