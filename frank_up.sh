@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Determine repo root and set up logging
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+
+LOG_DIR="$ROOT/logs"
+LOG_FILE="$LOG_DIR/frank_up.log"
+mkdir -p "$LOG_DIR"
+
+exec > >(tee -a "$LOG_FILE") 2>&1
+echo "=== frank_up.sh started at $(date) ==="
+
 # --- Project policy ---
 # NO DOCKER: This project does not use Docker or containers.
 # One-command bring-up: this script installs missing deps, configures, and runs services.
-
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$ROOT"
-mkdir -p logs
 
 # --- Helpers ---
 # Return 0 if the given command exists, else non-zero
