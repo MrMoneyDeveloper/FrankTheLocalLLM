@@ -1,0 +1,10 @@
+C:\Workspace\FrankTheLocalLLM\backend\app\llm.py:16: LangChainDeprecationWarning: The class `Ollama` was deprecated in LangChain 0.3.1 and will be removed in 1.0.0. An updated version of the class exists in the :class:`~langchain-ollama package and should be used instead. To use it run `pip install -U :class:`~langchain-ollama` and import as `from :class:`~langchain_ollama import OllamaLLM``.
+  self._client = Ollama(model=model)
+INFO:__main__:Starting FrankTheLocalLLM on 0.0.0.0:8000
+ERROR:__main__:Cannot bind to 0.0.0.0:8000 - [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+ERROR:__main__:Cannot bind to 0.0.0.0:8000 - [WinError 10013] An attempt was made to access a socket in a way forbidden by its access permissions
+WARNING:__main__:Port 8000 busy, switching to 8001
+INFO:     Started server process [40484]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
