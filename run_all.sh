@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 LOG_DIR="$ROOT/logs"
@@ -10,6 +11,7 @@ export LOG_FILE
 
 exec > >(tee -a "$LOG_FILE") 2>&1
 echo "=== run_all.sh started at $(date) ==="
+
 
 # Ensure we're running on Ubuntu/WSL; other systems use a different bootstrap
 if [[ ! -r /etc/os-release ]] || ! grep -qi ubuntu /etc/os-release; then
